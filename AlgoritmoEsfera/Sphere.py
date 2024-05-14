@@ -89,9 +89,14 @@ def algoritmo_evolutivo(NP, CR, F, max_gen):
         if evaluaciones[mejor_individuo_idx] < mejor_evaluacion:
             mejor_individuo = poblacion.individuos[mejor_individuo_idx]
             mejor_evaluacion = evaluaciones[mejor_individuo_idx]
+        
         print(f"Generación {i+1}:")
         for individuo in poblacion.individuos:
             print(individuo)
+        
+        print(f"Generación {i+1}:")
+        print(individuo)
+        
     print("Mejor individuo:", mejor_individuo)
     print("Mejor evaluación:", mejor_evaluacion)
     # Añadir el mejor individuo encontrado
