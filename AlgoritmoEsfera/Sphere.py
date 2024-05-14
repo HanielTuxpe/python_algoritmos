@@ -91,8 +91,11 @@ def algoritmo_evolutivo(NP, CR, F, max_gen, D):
         if evaluaciones[mejor_individuo_idx] < mejor_evaluacion:
             mejor_individuo = poblacion.individuos[mejor_individuo_idx]
             mejor_evaluacion = evaluaciones[mejor_individuo_idx]
+            
+            # Añadir si es menor y no está en el array
+            if mejor_evaluacion not in fitness_Gen:
+                fitness_Gen.append(mejor_evaluacion)
         
-        fitness_Gen.append(mejor_evaluacion)
     # Añadir el mejor individuo encontrado
     print("fitness general")
     for i in range(len(fitness_Gen)):
