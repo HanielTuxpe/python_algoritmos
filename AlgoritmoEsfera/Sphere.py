@@ -101,7 +101,7 @@ def algoritmo_evolutivo(NP, CR, F, max_gen):
     print("Mejor evaluación:", mejor_evaluacion)
     # Añadir el mejor individuo encontrado
 
-NP = 10
+NP = 50
 CR = 0.9
 F = 0.9
 max_gen = 100
