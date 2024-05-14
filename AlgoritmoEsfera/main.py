@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 class Poblacion:
     
@@ -8,13 +9,16 @@ class Poblacion:
         
     # Función para generar una población inicial de tamaño NP
     def generar_individuo(self):
-        return np.random.uniform(low=-20, high=20, size=2)
+        return np.random.uniform(low=-80, high=80, size=10)
 
     # Función para evaluar la función objetivo de un individuo
     def evaluar(self, individuo):
-        x1, x2 = individuo
-        # Función de aptitud: f(x1, x2) = (x1^3 + x2^3 )/ 100
-        return (x1**3 + x2**3) / 100
+        o = np.zeros_like(individuo)  # Vector de traslación, en este caso es un vector de ceros
+        factorAjuste = 1.0  # Factor de ajuste, en este caso es 1.0
+        f = 0.0  # Constante, en este caso es 0.0
+        z = individuo - o
+        suma_cuadrados = np.sum(z**2)
+        return suma_cuadrados + factorAjuste * f
 
     # Función para evaluar la función objetivo de toda la población
     def evaluar_poblacion(self):
@@ -31,12 +35,28 @@ class Poblacion:
                 nuevo_individuo[j] = individuo[j] + F * (self.individuos[r2][j] - self.individuos[r3][j])
         return nuevo_individuo
 
+    def rest_bou(valores):
+        return np.clip(valores, -100, 100)
+
+
+    def rest_reflex(self, valores, inf_lim, sup_lim):
+        for i in range(len(valores)):
+            if valores[i] < inf_lim[i]:
+                valores[i] = 2 * inf_lim[i] - valores[i]
+            elif valores[i] > sup_lim[i]:
+                valores[i] = 2 * sup_lim[i] - valores[i]
+        return valores
+    
+
     # Función para realizar la cruz de dos individuos
     def cruz(self, individuo1, individuo2):
         hijo = (individuo1 + individuo2) / 2
-        # Aplicar restricción para asegurarse de que los valores estén dentro del rango [-20, 20]
-        hijo = np.clip(hijo, -20, 20)
+        # Aplicar restricción por reflexión para asegurarse de que los valores estén dentro del rango [-100, 100]
+        inf_lim = np.full_like(hijo, -100)
+        sup_lim = np.full_like(hijo, 100)
+        hijo = self.rest_reflex(hijo, inf_lim, sup_lim)
         return hijo
+
 
     # Función para realizar la selección de un individuo
     def seleccion(self, CR, F):
@@ -53,30 +73,32 @@ class Poblacion:
         self.individuos = nueva_poblacion
 
 def algoritmo_evolutivo(NP, CR, F, max_generaciones):
-    poblacion = Poblacion(NP) #Generar población aleatoria
-    print("Población inicial:")
-    for individuo in poblacion.individuos:
-        print(individuo)
+    poblacion = Poblacion(NP)
     mejor_individuo = None
     mejor_evaluacion = float('inf')
+    historial_evaluaciones = []  # Lista para almacenar las evaluaciones en cada generación
     for i in range(max_generaciones):
-        poblacion.seleccion(CR, F) #Seleccionar, Mutar y Cruzar
+        poblacion.seleccion(CR, F)
         evaluaciones = poblacion.evaluar_poblacion()
         mejor_individuo_idx = np.argmin(evaluaciones)
-        #Evaluar el trial
         if evaluaciones[mejor_individuo_idx] < mejor_evaluacion:
             mejor_individuo = poblacion.individuos[mejor_individuo_idx]
             mejor_evaluacion = evaluaciones[mejor_individuo_idx]
-        print(f"Generación {i+1}:")
-        for individuo in poblacion.individuos:
-            print(individuo)
-    return mejor_individuo, mejor_evaluacion
-
+        historial_evaluaciones.append(mejor_evaluacion)  # Guardar la mejor evaluación de la generación actual
+    return mejor_individuo, mejor_evaluacion, historial_evaluaciones
 
 NP = 10
 CR = 0.9
 F = 0.9
 max_generaciones = 30
-mejor_individuo, mejor_evaluacion = algoritmo_evolutivo(NP, CR, F, max_generaciones)
+mejor_individuo, mejor_evaluacion, historial_evaluaciones = algoritmo_evolutivo(NP, CR, F, max_generaciones)
 print("Mejor individuo:", mejor_individuo)
 print("Mejor evaluación:", mejor_evaluacion)
+
+# Gráfica de la evolución de la mejor evaluación a lo largo de las generaciones
+plt.plot(range(1, max_generaciones + 1), historial_evaluaciones)
+plt.xlabel('Generación')
+plt.ylabel('Mejor Evaluación')
+plt.title('Evolución de la Mejor Evaluación')
+plt.grid(True)
+plt.show()

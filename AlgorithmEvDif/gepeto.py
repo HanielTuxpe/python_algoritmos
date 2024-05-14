@@ -17,6 +17,7 @@ class Poblacion:
         evaluaciones = [self.evaluar(individuo) for individuo in self.individuos]
         return evaluaciones
 
+    # Función para realizar la mutación de un individuo
     def mutacion(self, individuo, CR, F):
         r1, r2, r3 = np.random.choice(self.NP, 3, replace=False)
         jrand = np.random.randint(0, len(individuo))

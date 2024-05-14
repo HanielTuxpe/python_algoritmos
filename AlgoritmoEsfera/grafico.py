@@ -1,4 +1,6 @@
 import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 class Poblacion:
     
@@ -6,15 +8,13 @@ class Poblacion:
         self.NP = NP
         self.individuos = [self.generar_individuo() for _ in range(NP)]
         
-    # Función para generar una población inicial de tamaño NP
+    # Función para generar un individuo aleatorio
     def generar_individuo(self):
-        return np.random.uniform(low=-20, high=20, size=2)
+        return np.random.uniform(low=-80, high=80, size=2)  # Solo se generan 2 dimensiones
 
     # Función para evaluar la función objetivo de un individuo
     def evaluar(self, individuo):
-        x1, x2 = individuo
-        # Función de aptitud: f(x1, x2) = (x1^3 + x2^3 )/ 100
-        return (x1**3 + x2**3) / 100
+        return individuo[0]**2 + individuo[1]**2  # Función de evaluación (ejemplo)
 
     # Función para evaluar la función objetivo de toda la población
     def evaluar_poblacion(self):
@@ -31,11 +31,21 @@ class Poblacion:
                 nuevo_individuo[j] = individuo[j] + F * (self.individuos[r2][j] - self.individuos[r3][j])
         return nuevo_individuo
 
+    # Función para aplicar restricción por reflexión
+    def rest_reflex(self, valores, inf_lim, sup_lim):
+        for i in range(len(valores)):
+            if valores[i] < inf_lim[i]:
+                valores[i] = 2 * inf_lim[i] - valores[i]
+            elif valores[i] > sup_lim[i]:
+                valores[i] = 2 * sup_lim[i] - valores[i]
+        return valores
+
     # Función para realizar la cruz de dos individuos
     def cruz(self, individuo1, individuo2):
         hijo = (individuo1 + individuo2) / 2
-        # Aplicar restricción para asegurarse de que los valores estén dentro del rango [-20, 20]
-        hijo = np.clip(hijo, -20, 20)
+        inf_lim = np.full_like(hijo, -100)
+        sup_lim = np.full_like(hijo, 100)
+        hijo = self.rest_reflex(hijo, inf_lim, sup_lim)
         return hijo
 
     # Función para realizar la selección de un individuo
@@ -53,30 +63,53 @@ class Poblacion:
         self.individuos = nueva_poblacion
 
 def algoritmo_evolutivo(NP, CR, F, max_generaciones):
-    poblacion = Poblacion(NP) #Generar población aleatoria
-    print("Población inicial:")
-    for individuo in poblacion.individuos:
-        print(individuo)
+    poblacion = Poblacion(NP)
     mejor_individuo = None
     mejor_evaluacion = float('inf')
+    historial_evaluaciones = []  # Lista para almacenar las evaluaciones en cada generación
     for i in range(max_generaciones):
-        poblacion.seleccion(CR, F) #Seleccionar, Mutar y Cruzar
+        poblacion.seleccion(CR, F)
         evaluaciones = poblacion.evaluar_poblacion()
         mejor_individuo_idx = np.argmin(evaluaciones)
-        #Evaluar el trial
         if evaluaciones[mejor_individuo_idx] < mejor_evaluacion:
             mejor_individuo = poblacion.individuos[mejor_individuo_idx]
             mejor_evaluacion = evaluaciones[mejor_individuo_idx]
-        print(f"Generación {i+1}:")
-        for individuo in poblacion.individuos:
-            print(individuo)
-    return mejor_individuo, mejor_evaluacion
+        historial_evaluaciones.append(mejor_evaluacion)  # Guardar la mejor evaluación de la generación actual
+    return mejor_individuo, mejor_evaluacion, historial_evaluaciones
 
-
+# Llamar al algoritmo evolutivo para encontrar la mejor solución
 NP = 10
 CR = 0.9
 F = 0.9
 max_generaciones = 30
-mejor_individuo, mejor_evaluacion = algoritmo_evolutivo(NP, CR, F, max_generaciones)
+mejor_individuo, mejor_evaluacion, historial_evaluaciones = algoritmo_evolutivo(NP, CR, F, max_generaciones)
+
+# Imprimir el mejor individuo y su mejor evaluación
 print("Mejor individuo:", mejor_individuo)
 print("Mejor evaluación:", mejor_evaluacion)
+
+# Crear una malla de valores para x e y
+x = np.linspace(-100, 100, 400)
+y = np.linspace(-100, 100, 400)
+X, Y = np.meshgrid(x, y)
+
+# Evaluar la función en cada punto de la malla
+Z = X**2 + Y**2
+
+# Crear el gráfico tridimensional
+fig = plt.figure(figsize=(10, 8))
+ax = fig.add_subplot(111, projection='3d')
+surf = ax.plot_surface(X, Y, Z, cmap='viridis', edgecolor='none')
+
+# Mostrar la mejor solución encontrada por el algoritmo evolutivo en la gráfica
+ax.scatter(mejor_individuo[0], mejor_individuo[1], mejor_evaluacion, color='red', s=100, label='Mejor Solución')
+
+# Personalizar el gráfico
+ax.set_xlabel('X')
+ax.set_ylabel('Y')
+ax.set_zlabel('Z')
+ax.set_title('Superficie tridimensional con la Mejor Solución')
+ax.legend()
+
+# Mostrar el gráfico
+plt.show()
