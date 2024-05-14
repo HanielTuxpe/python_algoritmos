@@ -4,13 +4,14 @@ from mpl_toolkits.mplot3d import Axes3D
 
 class Poblacion:
     
-    def __init__(self, NP):
+    def __init__(self, NP, Dim):
         self.NP = NP
-        self.individuos = [self.generar_individuo() for _ in range(NP)]
+        self.Dim = Dim
+        self.individuos = [self.generar_individuo(Dim) for _ in range(NP)]
         
     # Función para generar una población inicial de tamaño NP
-    def generar_individuo(self):
-        return np.random.uniform(low=-100, high=100, size=10)
+    def generar_individuo(self, Dim):
+        return np.random.uniform(low=-100, high=100, size=Dim)
 
     # Función para evaluar el individuo
     def evaluar_individuo(self, individuo):
@@ -72,13 +73,14 @@ class Poblacion:
                 nueva_poblacion.append(individuo)
         self.individuos = nueva_poblacion
 
-def algoritmo_evolutivo(NP, CR, F, max_gen):
-    poblacion = Poblacion(NP) #Generar población aleatoria
+def algoritmo_evolutivo(NP, CR, F, max_gen, D):
+    poblacion = Poblacion(NP, D) #Generar población aleatoria
     print(f"Población Inicial:")
     for individuo in poblacion.individuos:
         print(individuo)
     mejor_individuo = None
     mejor_evaluacion = float('inf')
+    fitness_Gen = []
     
     for i in range(max_gen):
         poblacion.seleccion(CR, F) # Seleccionar, Mutar y Cruzar
@@ -90,19 +92,15 @@ def algoritmo_evolutivo(NP, CR, F, max_gen):
             mejor_individuo = poblacion.individuos[mejor_individuo_idx]
             mejor_evaluacion = evaluaciones[mejor_individuo_idx]
         
-        print(f"Generación {i+1}:")
-        for individuo in poblacion.individuos:
-            print(individuo)
-        
-        print(f"Generación {i+1}:")
-        print(individuo)
-        
-    print("Mejor individuo:", mejor_individuo)
-    print("Mejor evaluación:", mejor_evaluacion)
+        fitness_Gen.append(mejor_evaluacion)
     # Añadir el mejor individuo encontrado
+    print("fitness general")
+    for i in range(len(fitness_Gen)):
+        print(fitness_Gen[i])
 
-NP = 50
+NP = 100
 CR = 0.9
 F = 0.9
-max_gen = 100
-algoritmo_evolutivo(NP, CR, F, max_gen)
+D = 10
+max_gen = 1000
+algoritmo_evolutivo(NP, CR, F, max_gen, D)
