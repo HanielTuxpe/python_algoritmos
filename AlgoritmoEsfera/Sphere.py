@@ -38,7 +38,7 @@ class Poblacion:
                 nuevo_individuo[j] = individuo[j] + F * (self.individuos[r2][j] - self.individuos[r3][j])
         return nuevo_individuo
 
-    def rest_bou(valores):
+    def rest_bou(self, valores):
         return np.clip(valores, -100, 100)
 
     def rest_reflex(self, valores, inf_lim, sup_lim):
@@ -91,7 +91,7 @@ def algoritmo_evolutivo(NP, CR, F, max_gen):
             mejor_evaluacion = evaluaciones[mejor_individuo_idx]
         print(f"Generación {i+1}:")
         for individuo in poblacion.individuos:
-            print(individuo)    
+            print(individuo)
     print("Mejor individuo:", mejor_individuo)
     print("Mejor evaluación:", mejor_evaluacion)
     # Añadir el mejor individuo encontrado
@@ -99,5 +99,5 @@ def algoritmo_evolutivo(NP, CR, F, max_gen):
 NP = 10
 CR = 0.9
 F = 0.9
-max_gen = 30
+max_gen = 100
 algoritmo_evolutivo(NP, CR, F, max_gen)
