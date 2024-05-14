@@ -75,14 +75,6 @@ class Poblacion:
 def algoritmo_evolutivo(NP, CR, F, max_gen):
     poblacion = Poblacion(NP) #Generar población aleatoria
     
-    # Crear una figura 3D
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-    
-    # Poblar la figura con puntos iniciales
-    for individuo in poblacion.individuos:
-        ax.scatter(individuo[0], individuo[1], individuo[2], color='green')
-    
     mejor_individuo = None
     mejor_evaluacion = float('inf')
     
@@ -97,22 +89,9 @@ def algoritmo_evolutivo(NP, CR, F, max_gen):
             mejor_evaluacion = evaluaciones[mejor_individuo_idx]
             print(mejor_individuo, mejor_evaluacion)
         
-        if i == max_gen -1:
-            # Poblar la figura con los puntos de la generación actual
-            for individuo in poblacion.individuos:
-                ax.scatter(individuo[0], individuo[1], individuo[2], color='blue')
-        
     print("Mejor individuo:", mejor_individuo)
     print("Mejor evaluación:", mejor_evaluacion)
     # Añadir el mejor individuo encontrado
-    ax.scatter(mejor_individuo[0], mejor_individuo[1], mejor_individuo[2], color='red', label='Mejor Individuo')
-    
-    ax.set_xlabel('X')
-    ax.set_ylabel('Y')
-    ax.set_zlabel('Z')
-    ax.legend()
-    
-    plt.show()
 
 NP = 10
 CR = 0.9

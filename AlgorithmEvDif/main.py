@@ -76,7 +76,7 @@ def algoritmo_evolutivo(NP, CR, F, max_generaciones):
 NP = 10
 CR = 0.9
 F = 0.9
-max_generaciones = 30
+max_generaciones = 100
 mejor_individuo, mejor_evaluacion = algoritmo_evolutivo(NP, CR, F, max_generaciones)
 print("Mejor individuo:", mejor_individuo)
 print("Mejor evaluación:", mejor_evaluacion)
