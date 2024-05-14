@@ -74,7 +74,9 @@ class Poblacion:
 
 def algoritmo_evolutivo(NP, CR, F, max_gen):
     poblacion = Poblacion(NP) #Generar población aleatoria
-    
+    print(f"Población Inicial:")
+    for individuo in poblacion.individuos:
+        print(individuo)
     mejor_individuo = None
     mejor_evaluacion = float('inf')
     
@@ -87,8 +89,9 @@ def algoritmo_evolutivo(NP, CR, F, max_gen):
         if evaluaciones[mejor_individuo_idx] < mejor_evaluacion:
             mejor_individuo = poblacion.individuos[mejor_individuo_idx]
             mejor_evaluacion = evaluaciones[mejor_individuo_idx]
+        print(f"Generación {i+1}:")
         for individuo in poblacion.individuos:
-            print("Mejor individuo:", mejor_individuo)    
+            print(individuo)    
     print("Mejor individuo:", mejor_individuo)
     print("Mejor evaluación:", mejor_evaluacion)
     # Añadir el mejor individuo encontrado
