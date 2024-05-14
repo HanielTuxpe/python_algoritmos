@@ -75,9 +75,6 @@ class Poblacion:
 
 def algoritmo_evolutivo(NP, CR, F, max_gen, D):
     poblacion = Poblacion(NP, D) #Generar población aleatoria
-    print(f"Población Inicial:")
-    for individuo in poblacion.individuos:
-        print(individuo)
     mejor_individuo = None
     mejor_evaluacion = float('inf')
     fitness_Gen = []
