@@ -61,6 +61,9 @@ class Poblacion:
         # Aplicar restricción por reflexión para asegurarse de que los valores estén dentro del rango [-100, 100]
         inf_lim = np.full_like(hijo, -100)
         sup_lim = np.full_like(hijo, 100)
+        
+        print(inf_lim, sup_lim)
+        
         hijo = self.rest_reflex(hijo, inf_lim, sup_lim)
         return hijo
 
@@ -94,10 +97,12 @@ def algoritmo_evolutivo(NP, CR, F, max_gen, D):
         if evaluaciones[mejor_individuo_idx] < mejor_evaluacion:
             mejor_individuo = poblacion.individuos[mejor_individuo_idx]
             mejor_evaluacion = evaluaciones[mejor_individuo_idx]
+            
+            # Añadir si es menor y no está en el array
+            if mejor_evaluacion not in fitness_Gen:
+                fitness_Gen.append(mejor_evaluacion)
         
-            # if mejor_evaluacion not in fitness_Gen:
-            # # Añadir si es menor y no está en el array
-        fitness_Gen.append(mejor_evaluacion)
+        print(f"Best Ind Gen {i} : {mejor_individuo}")
         
     # Añadir el mejor individuo encontrado
     print("fitness general")
@@ -105,18 +110,18 @@ def algoritmo_evolutivo(NP, CR, F, max_gen, D):
         print(fitness_Gen[i])
     
     # Graficar la convergencia
-    plt.plot(range(len(fitness_Gen)), fitness_Gen)
+    plt.plot(range(len(fitness_Gen)), fitness_Gen, marker='o', linestyle='-')
     plt.xlabel('Generación')
     plt.ylabel('Mejor Fitness')
     plt.title('Convergencia del Algoritmo Evolutivo')
     plt.show()
 
 # Parámetros del algoritmo
-NP = 100
+NP = 10
 CR = 0.9
 F = 0.9
 D = 10
-max_gen = 1000
+max_gen = 50
 
 # Llamar a la función principal
 algoritmo_evolutivo(NP, CR, F, max_gen, D)
