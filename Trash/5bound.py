@@ -88,7 +88,7 @@ def algoritmo_evolutivo(NP, CR, F, max_gen, D):
     plt.plot(range(len(fitness_Gen)), fitness_Gen, marker='o', linestyle='-')
     plt.xlabel('Generación')
     plt.ylabel('Mejor Fitness')
-    plt.title('Convergencia del Algoritmo Evolutivo')
+    plt.title('Convergencia del Algoritmo Evolucion Diferencial-Bound')
     plt.show()
     
     print("Mejor individuo encontrado:")
@@ -96,10 +96,10 @@ def algoritmo_evolutivo(NP, CR, F, max_gen, D):
     print("Mejor evaluación:")
     print(mejor_evaluacion)
 
-NP = 10
+NP = 100
 CR = 0.7
 F = 0.6
 D = 10
-max_gen = 30
+max_gen = 1000
 
 algoritmo_evolutivo(NP, CR, F, max_gen, D)

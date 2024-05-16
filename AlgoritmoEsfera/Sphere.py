@@ -64,7 +64,7 @@ class Poblacion:
             individuo = self.individuos[i]
             mutado = self.mutacion(individuo, CR, F)
             cruzado = self.cruz(individuo, mutado)
-            if self.evaluar_individuo(cruzado) <= evaluaciones[i]:
+            if self.evaluar_individuo(cruzado) < evaluaciones[i]:
                 nueva_poblacion.append(cruzado)
             else:
                 nueva_poblacion.append(individuo)
@@ -96,7 +96,7 @@ def algoritmo_evolutivo(NP, CR, F, max_gen, D):
     plt.plot(range(len(fitness_Gen)), fitness_Gen,  marker='o')
     plt.xlabel('Generación')
     plt.ylabel('Mejor Fitness')
-    plt.title('Convergencia del Algoritmo Evolutivo')
+    plt.title('Convergencia del Algoritmo Evolución Diferencial: Esfera/Reflex')
     plt.show()
 
 NP = 100
