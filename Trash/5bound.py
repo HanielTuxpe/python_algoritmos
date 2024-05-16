@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from datetime import datetime
+import math
 
 class Poblacion:
     
@@ -21,23 +22,17 @@ class Poblacion:
 
     def evaluar_individuo(self, individuo):
         z = individuo - self.o
-        f_constante = -1400
-        suma_cuadrados = np.sum(z**2)
-        fitness = suma_cuadrados - f_constante
-        return fitness
+        F5 = -1000
+        suma = 0
+        for j in range(self.Dim):
+            suma += abs(z[j]) ** (2 + 4 * (j / (self.Dim - 1)))
+        resultado = math.sqrt(suma) - F5
+        return resultado
     
     def evaluar_poblacion(self):
         evaluaciones = [self.evaluar_individuo(individuo) for individuo in self.individuos]
         return evaluaciones
 
-    def rest_reflex(self, valores, inf_lim, sup_lim):
-        for i in range(len(valores)):
-            if valores[i] < inf_lim[i]:
-                valores[i] = 2 * inf_lim[i] - valores[i]
-            elif valores[i] > sup_lim[i]:
-                valores[i] = 2 * sup_lim[i] - valores[i]
-        return valores
-    
     def rest_bou(self, valores):
         return np.clip(valores, -100, 100)
 
@@ -52,9 +47,7 @@ class Poblacion:
 
     def cruz(self, individuo1, individuo2):
         hijo = (individuo1 + individuo2) / 2
-        inf_lim = np.full_like(hijo, -100)
-        sup_lim = np.full_like(hijo, 100)
-        hijo = self.rest_reflex(hijo, inf_lim, sup_lim)
+        hijo = self.rest_bou(hijo)
         return hijo
 
     def seleccion(self, CR, F):
@@ -69,7 +62,6 @@ class Poblacion:
             else:
                 nueva_poblacion.append(individuo)
         self.individuos = nueva_poblacion
-
 
 def algoritmo_evolutivo(NP, CR, F, max_gen, D):
     seed = int(datetime.now().timestamp())
@@ -89,20 +81,25 @@ def algoritmo_evolutivo(NP, CR, F, max_gen, D):
         
         fitness_Gen.append(mejor_evaluacion)
     
-    print("fitness general")
+    print("Fitness general:")
     for i in range(len(fitness_Gen)):
-        print(fitness_Gen[i])
+        print(f"Generación {i + 1}: {fitness_Gen[i]}")
     
-    plt.plot(range(len(fitness_Gen)), fitness_Gen,  marker='o')
+    plt.plot(range(len(fitness_Gen)), fitness_Gen, marker='o', linestyle='-')
     plt.xlabel('Generación')
     plt.ylabel('Mejor Fitness')
     plt.title('Convergencia del Algoritmo Evolutivo')
     plt.show()
+    
+    print("Mejor individuo encontrado:")
+    print(mejor_individuo)
+    print("Mejor evaluación:")
+    print(mejor_evaluacion)
 
-NP = 100
+NP = 10
 CR = 0.7
 F = 0.6
 D = 10
-max_gen = 1000
+max_gen = 30
 
 algoritmo_evolutivo(NP, CR, F, max_gen, D)

@@ -58,13 +58,12 @@ class Poblacion:
     # Función para realizar la cruz de dos individuos
     def cruz(self, individuo1, individuo2):
         hijo = (individuo1 + individuo2) / 2
+        print(f" {hijo}")
         # Aplicar restricción por reflexión para asegurarse de que los valores estén dentro del rango [-100, 100]
         inf_lim = np.full_like(hijo, -100)
         sup_lim = np.full_like(hijo, 100)
-        
-        print(inf_lim, sup_lim)
-        
         hijo = self.rest_reflex(hijo, inf_lim, sup_lim)
+        print(f" {hijo}")
         return hijo
 
     # Función para realizar la selección de un individuo
@@ -75,7 +74,7 @@ class Poblacion:
             individuo = self.individuos[i]
             mutado = self.mutacion(individuo, CR, F)
             cruzado = self.cruz(individuo, mutado)
-            if self.evaluar_individuo(cruzado) <= evaluaciones[i]:
+            if self.evaluar_individuo(cruzado) < evaluaciones[i]:
                 nueva_poblacion.append(cruzado)
             else:
                 nueva_poblacion.append(individuo)
