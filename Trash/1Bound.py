@@ -2,7 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from datetime import datetime
 
-class Poblacion:
+final_fit = []
+
+class DifEvo_Bound:
     
     def __init__(self, NP, Dim, seed=None):
         self.NP = NP
@@ -63,7 +65,7 @@ class Poblacion:
 
 def algoritmo_evolutivo(NP, CR, F, max_gen, D):
     seed = int(datetime.now().timestamp())
-    poblacion = Poblacion(NP, D, seed)
+    poblacion = DifEvo_Bound(NP, D, seed)
     mejor_individuo = None
     mejor_evaluacion = float('inf')
     fitness_Gen = []
@@ -79,16 +81,28 @@ def algoritmo_evolutivo(NP, CR, F, max_gen, D):
         
         fitness_Gen.append(mejor_evaluacion)
     
+    return mejor_evaluacion
+    
     plt.plot(range(len(fitness_Gen)), fitness_Gen,  marker='o')
     plt.xlabel('Generación')
     plt.ylabel('Mejor Fitness')
     plt.title('Convergencia del Algoritmo Evolución Diferencial: Esfera/Bounds')
     plt.show()
 
-NP = 100
-CR = 0.7
-F = 0.6
-D = 10
-max_gen = 1000
+def main():
+    NP = 100
+    CR = 0.7
+    F = 0.6
+    D = 10
+    max_gen = 1000
 
-algoritmo_evolutivo(NP, CR, F, max_gen, D)
+    for i in range (25):
+        print(f"vuelta {i}")
+        min_fit = algoritmo_evolutivo(NP, CR, F, max_gen, D)
+        final_fit.append(min_fit)
+        
+    return final_fit
+
+if __name__ == '__main__':
+    fitness= main()
+    print(fitness)

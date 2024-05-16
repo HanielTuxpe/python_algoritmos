@@ -4,6 +4,8 @@ from datetime import datetime
 import math
 import random as rd
 
+final_fit = []
+
 class Poblacion:
     
     def __init__(self, NP, Dim, seed=None):
@@ -87,25 +89,26 @@ def algoritmo_evolutivo(NP, CR, F, max_gen, D):
         
         fitness_Gen.append(mejor_evaluacion)
     
-    print("Fitness general:")
-    for i in range(len(fitness_Gen)):
-        print(f"Generación {i + 1}: {fitness_Gen[i]}")
+    return mejor_evaluacion
     
-    plt.plot(range(len(fitness_Gen)), fitness_Gen, marker='o', linestyle='-')
+    plt.plot(range(len(fitness_Gen)), fitness_Gen,  marker='o')
     plt.xlabel('Generación')
     plt.ylabel('Mejor Fitness')
-    plt.title('Convergencia del Algoritmo Evolucion Diferencial-Random')
+    plt.title('Convergencia del Algoritmo Evolución Diferencial: Esfera/Random')
     plt.show()
-    
-    print("Mejor individuo encontrado:")
-    print(mejor_individuo)
-    print("Mejor evaluación:")
-    print(mejor_evaluacion)
 
-NP = 100
-CR = 0.7
-F = 0.6
-D = 10
-max_gen = 1000
+def main():
+    NP = 100
+    CR = 0.7
+    F = 0.6
+    D = 10
+    max_gen = 1000
 
-algoritmo_evolutivo(NP, CR, F, max_gen, D)
+    for i in range (25):
+        final_fit.append(algoritmo_evolutivo(NP, CR, F, max_gen, D))
+        
+    return final_fit
+
+if __name__ == '__main__':
+    fitness= main()
+    print(fitness)
