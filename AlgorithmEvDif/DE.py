@@ -38,11 +38,8 @@ def cruz(individuo1, individuo2):
     hijo = np.clip(hijo, -20, 20)
     return hijo
 
-
 # Función para realizar la selección de un individuo
 def seleccion(poblacion, CR, F):
-    
-    
     nueva_poblacion = []
     evaluaciones = evaluar_poblacion(poblacion)
     for i in range(len(poblacion)):
