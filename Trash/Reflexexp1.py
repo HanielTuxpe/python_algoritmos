@@ -39,9 +39,6 @@ class DifEvo_Reflex:
             elif valores[i] > sup_lim[i]:
                 valores[i] = 2 * sup_lim[i] - valores[i]
         return valores
-    
-    def rest_bou(self, valores):
-        return np.clip(valores, -100, 100)
 
     def mutacion(self, individuo, CR, F):
         r1, r2, r3 = np.random.choice(self.NP, 3, replace=False)

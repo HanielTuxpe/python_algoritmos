@@ -56,7 +56,7 @@ class DifEvo_Bound:
             individuo = self.individuos[i]
             mutado = self.mutacion(individuo, CR, F)
             cruzado = self.cruz(individuo, mutado)
-            if self.evaluar_individuo(cruzado) < evaluaciones[i]:
+            if self.evaluar_individuo(cruzado) <= evaluaciones[i]:
                 nueva_poblacion.append(cruzado)
             else:
                 nueva_poblacion.append(individuo)

@@ -28,7 +28,7 @@ class Poblacion:
         nuevo_individuo = np.copy(individuo)
         for j in range(len(individuo)):
             if np.random.rand() < CR or j == jrand:
-                nuevo_individuo[j] = individuo[j] + F * (self.individuos[r2][j] - self.individuos[r3][j])
+                nuevo_individuo[j] = self.individuos[r1][j] + F * (self.individuos[r2][j] - self.individuos[r3][j])
         return nuevo_individuo
 
     # Función para realizar la cruz de dos individuos
