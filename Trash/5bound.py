@@ -5,7 +5,7 @@ import math
 
 final_fit = []
 
-class Poblacion:
+class DifEvo_F5_Bound:
     
     def __init__(self, NP, Dim, seed=None):
         self.NP = NP
@@ -67,7 +67,7 @@ class Poblacion:
 
 def algoritmo_evolutivo(NP, CR, F, max_gen, D):
     seed = int(datetime.now().timestamp())
-    poblacion = Poblacion(NP, D, seed)
+    poblacion = DifEvo_F5_Bound(NP, D, seed)
     mejor_individuo = None
     mejor_evaluacion = float('inf')
     fitness_Gen = []

@@ -1,12 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from datetime import datetime
-import math
 import random as rd
 
 final_fit = []
 
-class DifEvo_F5_Rand:
+class DifEvo_Rand:
     
     def __init__(self, NP, Dim, seed=None):
         self.NP = NP
@@ -27,18 +26,16 @@ class DifEvo_F5_Rand:
 
     def evaluar_individuo(self, individuo):
         z = individuo - self.o
-        F5 = -1000
-        suma = 0
-        for j in range(self.Dim):
-            suma += abs(z[j]) ** (2 + 4 * (j / (self.Dim - 1)))
-        resultado = math.sqrt(suma) - F5
-        return resultado
+        f_constante = -1400
+        suma_cuadrados = np.sum(z**2)
+        fitness = suma_cuadrados - f_constante
+        return fitness
     
     def evaluar_poblacion(self):
         evaluaciones = [self.evaluar_individuo(individuo) for individuo in self.individuos]
         return evaluaciones
-
-    def restriccion(self, valores):
+    
+    def res_rand(self, valores):
         for i in range(len(valores)):
             if valores[i] > self.MAX or valores[i] < self.MIN:
                 valores[i] = self.MIN + rd.random() * (self.MAX - self.MIN)
@@ -55,7 +52,7 @@ class DifEvo_F5_Rand:
 
     def cruz(self, individuo1, individuo2):
         hijo = (individuo1 + individuo2) / 2
-        hijo = self.restriccion(hijo)
+        hijo = self.res_rand(hijo)
         return hijo
 
     def seleccion(self, CR, F):
@@ -65,15 +62,16 @@ class DifEvo_F5_Rand:
             individuo = self.individuos[i]
             mutado = self.mutacion(individuo, CR, F)
             cruzado = self.cruz(individuo, mutado)
-            if self.evaluar_individuo(cruzado) <= evaluaciones[i]:
+            if self.evaluar_individuo(cruzado) < evaluaciones[i]:
                 nueva_poblacion.append(cruzado)
             else:
                 nueva_poblacion.append(individuo)
         self.individuos = nueva_poblacion
 
+
 def algoritmo_evolutivo(NP, CR, F, max_gen, D):
     seed = int(datetime.now().timestamp())
-    poblacion = DifEvo_F5_Rand(NP, D, seed)
+    poblacion = DifEvo_Rand(NP, D, seed)
     mejor_individuo = None
     mejor_evaluacion = float('inf')
     fitness_Gen = []

@@ -103,6 +103,6 @@ def main():
         
     return final_fit
 
-if __name__ == '__main__':
-    fitness= main()
-    print(fitness)
+# if __name__ == '__main__':
+#     fitness= main()
+#     print(fitness)

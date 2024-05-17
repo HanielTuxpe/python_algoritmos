@@ -1,18 +1,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from datetime import datetime
-import random as rd
 
 final_fit = []
 
-class Poblacion:
+class DifEvo_Bound:
     
     def __init__(self, NP, Dim, seed=None):
         self.NP = NP
         self.Dim = Dim
         self.seed = seed
-        self.MAX = 100
-        self.MIN = -100
         self.individuos = self.generar_poblacion(seed)
         self.o = np.random.uniform(low=-80, high=80, size=self.Dim)
         
@@ -34,12 +31,9 @@ class Poblacion:
     def evaluar_poblacion(self):
         evaluaciones = [self.evaluar_individuo(individuo) for individuo in self.individuos]
         return evaluaciones
-    
-    def res_rand(self, valores):
-        for i in range(len(valores)):
-            if valores[i] > self.MAX or valores[i] < self.MIN:
-                valores[i] = self.MIN + rd.random() * (self.MAX - self.MIN)
-        return valores
+
+    def rest_bou(self, valores):
+        return np.clip(valores, -100, 100)
 
     def mutacion(self, individuo, CR, F):
         r1, r2, r3 = np.random.choice(self.NP, 3, replace=False)
@@ -52,7 +46,7 @@ class Poblacion:
 
     def cruz(self, individuo1, individuo2):
         hijo = (individuo1 + individuo2) / 2
-        hijo = self.res_rand(hijo)
+        hijo = self.rest_bou(hijo)
         return hijo
 
     def seleccion(self, CR, F):
@@ -71,7 +65,7 @@ class Poblacion:
 
 def algoritmo_evolutivo(NP, CR, F, max_gen, D):
     seed = int(datetime.now().timestamp())
-    poblacion = Poblacion(NP, D, seed)
+    poblacion = DifEvo_Bound(NP, D, seed)
     mejor_individuo = None
     mejor_evaluacion = float('inf')
     fitness_Gen = []
@@ -92,7 +86,7 @@ def algoritmo_evolutivo(NP, CR, F, max_gen, D):
     plt.plot(range(len(fitness_Gen)), fitness_Gen,  marker='o')
     plt.xlabel('Generación')
     plt.ylabel('Mejor Fitness')
-    plt.title('Convergencia del Algoritmo Evolución Diferencial: Esfera/Random')
+    plt.title('Convergencia del Algoritmo Evolución Diferencial: Esfera/Bounds')
     plt.show()
 
 def main():
@@ -103,7 +97,9 @@ def main():
     max_gen = 1000
 
     for i in range (25):
-        final_fit.append(algoritmo_evolutivo(NP, CR, F, max_gen, D))
+        print(f"vuelta {i}")
+        min_fit = algoritmo_evolutivo(NP, CR, F, max_gen, D)
+        final_fit.append(min_fit)
         
     return final_fit
 
