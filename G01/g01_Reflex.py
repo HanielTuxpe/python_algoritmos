@@ -61,10 +61,24 @@ class Poblacion:
         for j in range(len(individuo)):
             if np.random.rand() < CR or j == jrand:
                 nuevo_individuo[j] = self.individuos[r1][j] + F * (self.individuos[r2][j] - self.individuos[r3][j])
-        # Aplicar límites a los genes
-        nuevo_individuo[:9] = np.clip(nuevo_individuo[:9], 0, 1)
-        nuevo_individuo[9:12] = np.clip(nuevo_individuo[9:12], 0, 100)
-        nuevo_individuo[12] = np.clip(nuevo_individuo[12], 0, 1)
+                
+                # Reflecting mechanism for handling constraints
+                if j < 9:
+                    nuevo_individuo[j] = np.clip(nuevo_individuo[j], 0, 1)
+                    if nuevo_individuo[j] < 0 or nuevo_individuo[j] > 1:
+                        nuevo_individuo[j] = np.clip(nuevo_individuo[j], 0, 1)
+                        nuevo_individuo[j] = 1 if nuevo_individuo[j] > 1 else 0
+                elif j < 12:
+                    nuevo_individuo[j] = np.clip(nuevo_individuo[j], 0, 100)
+                    if nuevo_individuo[j] < 0 or nuevo_individuo[j] > 100:
+                        nuevo_individuo[j] = np.clip(nuevo_individuo[j], 0, 100)
+                        nuevo_individuo[j] = 100 if nuevo_individuo[j] > 100 else 0
+                else:
+                    nuevo_individuo[j] = np.clip(nuevo_individuo[j], 0, 1)
+                    if nuevo_individuo[j] < 0 or nuevo_individuo[j] > 1:
+                        nuevo_individuo[j] = np.clip(nuevo_individuo[j], 0, 1)
+                        nuevo_individuo[j] = 1 if nuevo_individuo[j] > 1 else 0
+                        
         return nuevo_individuo
 
     # Función para realizar la cruz de dos individuos
@@ -103,7 +117,7 @@ class Poblacion:
                 else:
                     nueva_poblacion.append(individuo)
                     
-        self.individuos = nueva_poblacion
+                self.individuos = nueva_poblacion
 
 
 def algoritmo_evolutivo(NP, CR, F, max_generaciones):
@@ -142,4 +156,4 @@ def main():
 
 if __name__ == '__main__':
     fitness = main()
-    print(fitness)
+   

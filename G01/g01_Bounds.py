@@ -142,4 +142,4 @@ def main():
 
 if __name__ == '__main__':
     fitness = main()
-    print(fitness)
+   
