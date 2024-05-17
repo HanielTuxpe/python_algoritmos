@@ -97,7 +97,6 @@ def main():
     max_gen = 1000
 
     for i in range (25):
-        print(f"vuelta {i}")
         min_fit = algoritmo_evolutivo(NP, CR, F, max_gen, D)
         final_fit.append(min_fit)
         
