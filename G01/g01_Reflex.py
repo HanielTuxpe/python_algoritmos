@@ -62,32 +62,22 @@ class Poblacion:
             if np.random.rand() < CR or j == jrand:
                 nuevo_individuo[j] = self.individuos[r1][j] + F * (self.individuos[r2][j] - self.individuos[r3][j])
                 
-                # Reflecting mechanism for handling constraints
+                # Reflejar los valores que están fuera de los límites
                 if j < 9:
-                    nuevo_individuo[j] = np.clip(nuevo_individuo[j], 0, 1)
-                    if nuevo_individuo[j] < 0 or nuevo_individuo[j] > 1:
-                        nuevo_individuo[j] = np.clip(nuevo_individuo[j], 0, 1)
-                        nuevo_individuo[j] = 1 if nuevo_individuo[j] > 1 else 0
+                    nuevo_individuo[j] = min(max(nuevo_individuo[j], 0), 1)
                 elif j < 12:
-                    nuevo_individuo[j] = np.clip(nuevo_individuo[j], 0, 100)
-                    if nuevo_individuo[j] < 0 or nuevo_individuo[j] > 100:
-                        nuevo_individuo[j] = np.clip(nuevo_individuo[j], 0, 100)
-                        nuevo_individuo[j] = 100 if nuevo_individuo[j] > 100 else 0
+                    nuevo_individuo[j] = min(max(nuevo_individuo[j], 0), 100)
                 else:
-                    nuevo_individuo[j] = np.clip(nuevo_individuo[j], 0, 1)
-                    if nuevo_individuo[j] < 0 or nuevo_individuo[j] > 1:
-                        nuevo_individuo[j] = np.clip(nuevo_individuo[j], 0, 1)
-                        nuevo_individuo[j] = 1 if nuevo_individuo[j] > 1 else 0
-                        
+                    nuevo_individuo[j] = min(max(nuevo_individuo[j], 0), 1)
         return nuevo_individuo
 
     # Función para realizar la cruz de dos individuos
     def cruz(self, individuo1, individuo2):
         hijo = (individuo1 + individuo2) / 2
-        # Aplicar límites a los genes
-        hijo[:9] = np.clip(hijo[:9], 0, 1)
-        hijo[9:12] = np.clip(hijo[9:12], 0, 100)
-        hijo[12] = np.clip(hijo[12], 0, 1)
+        # Reflejar los valores que están fuera de los límites
+        hijo[:9] = np.minimum(np.maximum(hijo[:9], 0), 1)
+        hijo[9:12] = np.minimum(np.maximum(hijo[9:12], 0), 100)
+        hijo[12] = np.minimum(np.maximum(hijo[12], 0), 1)
         return hijo
 
     # Función para realizar la selección de un individuo
@@ -117,7 +107,7 @@ class Poblacion:
                 else:
                     nueva_poblacion.append(individuo)
                     
-                self.individuos = nueva_poblacion
+        self.individuos = nueva_poblacion
 
 
 def algoritmo_evolutivo(NP, CR, F, max_generaciones):
@@ -143,7 +133,7 @@ def algoritmo_evolutivo(NP, CR, F, max_generaciones):
     return mejor_evaluacion, mejor_es_factible
 
 def main():
-    NP = 10
+    NP = 100
     CR = 0.9
     F = 0.9
     max_gen = 1000
@@ -156,4 +146,3 @@ def main():
 
 if __name__ == '__main__':
     fitness = main()
-   

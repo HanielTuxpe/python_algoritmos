@@ -11,9 +11,9 @@ class Comparacion:
             print(".", end="", flush=True)
             time.sleep(0.5) 
         g01_Bound_Result = bound.main()
-        print(g01_Bound_Result)
-
-        print(" Experimento completado.\n")
+        for resultado in g01_Bound_Result:
+            print(resultado)
+        print("Experimento completado.\n")
 
 
         print("Ejecutando Experimento Reflex")
@@ -21,12 +21,10 @@ class Comparacion:
             print(".", end="", flush=True)
             time.sleep(0.5) 
         g01_Reflex_Result =  reflex.main()
-        print(g01_Reflex_Result)
-
-        print(" Experimento completado.\n")
+        for resultado in g01_Reflex_Result:
+            print(resultado)
+        print("Experimento completado.\n")
 
 if __name__ == "__main__":
     graficador = Comparacion()
     graficador.excecute()
-
-

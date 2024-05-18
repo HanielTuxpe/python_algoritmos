@@ -129,7 +129,7 @@ def algoritmo_evolutivo(NP, CR, F, max_generaciones):
     return mejor_evaluacion, mejor_es_factible
 
 def main():
-    NP = 10
+    NP = 100
     CR = 0.9
     F = 0.9
     max_gen = 1000
