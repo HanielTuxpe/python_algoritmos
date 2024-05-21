@@ -8,33 +8,31 @@ class Poblacion:
         self.NP = NP
         self.individuos = [self.generar_individuo() for _ in range(NP)]
         
-    # Función para generar una población inicial de tamaño NP
     def generar_individuo(self):
+        # Genera un individuo con 13 dimensiones, con valores aleatorios dentro de rangos específicos según la formula.
         individuo = np.zeros(13)
         individuo[:4] = np.random.uniform(low=0, high=1, size=4)
         individuo[4:9] = np.random.uniform(low=0, high=1, size=5)
-        individuo[9:12] = np.random.uniform(low=0, high=10, size=3)  # Adjust the range
+        individuo[9:12] = np.random.uniform(low=0, high=10, size=3)
         individuo[12] = np.random.uniform(low=0, high=1)
         return individuo
 
-
-    # Función para evaluar la función objetivo de un individuo
     def evaluar(self, individuo):
+        # Evalúa la función objetivo de un individuo, incluyendo una penalización por violación de restricciones.
         x = individuo
         fitness = 5 * np.sum(x[:4]) - 5 * np.sum(x[:4]**2) - np.sum(x[4:])
         restricciones = self.evaluar_restricciones(individuo)
         penalizacion = sum([max(0, r) for r in restricciones])
-        fitness += penalizacion * 10000  # Increase penalty factor
+        fitness += penalizacion * 10000
         return fitness, penalizacion
-
 
     def evaluar_poblacion(self):
         evaluaciones = [self.evaluar(individuo) for individuo in self.individuos]
         return evaluaciones
 
-    # Función para evaluar las restricciones
     def evaluar_restricciones(self, individuo):
         x = individuo
+        #Restricciones propuestas por la fórmula G01
         restricciones = [
             2*x[0] + 2*x[1] + x[9] + x[10] - 10,
             2*x[0] + 2*x[2] + x[9] + x[11] - 10,
@@ -48,13 +46,13 @@ class Poblacion:
         ]
         return restricciones
 
-    # Función para evaluar si un individuo cumple con las restricciones
     def cumple_restricciones(self, individuo):
+        # Verifica si un individuo cumple con todas las restricciones.
         restricciones = self.evaluar_restricciones(individuo)
         return all(r <= 0 for r in restricciones)
 
-    # Función para realizar la mutación de un individuo
     def mutacion(self, individuo, CR, F):
+        # Realiza la mutación de un individuo.
         r1, r2, r3 = np.random.choice(self.NP, 3, replace=False)
         jrand = np.random.randint(0, len(individuo))
         nuevo_individuo = np.copy(individuo)
@@ -62,7 +60,7 @@ class Poblacion:
             if np.random.rand() < CR or j == jrand:
                 nuevo_individuo[j] = self.individuos[r1][j] + F * (self.individuos[r2][j] - self.individuos[r3][j])
                 
-                # Reflejar los valores que están fuera de los límites
+                # Refleja los valores que están fuera de los límites
                 if j < 9:
                     nuevo_individuo[j] = min(max(nuevo_individuo[j], 0), 1)
                 elif j < 12:
@@ -71,17 +69,17 @@ class Poblacion:
                     nuevo_individuo[j] = min(max(nuevo_individuo[j], 0), 1)
         return nuevo_individuo
 
-    # Función para realizar la cruz de dos individuos
     def cruz(self, individuo1, individuo2):
+        # Realiza la cruz de dos individuos.
         hijo = (individuo1 + individuo2) / 2
-        # Reflejar los valores que están fuera de los límites
+        # Refleja los valores que están fuera de los límites
         hijo[:9] = np.minimum(np.maximum(hijo[:9], 0), 1)
         hijo[9:12] = np.minimum(np.maximum(hijo[9:12], 0), 100)
         hijo[12] = np.minimum(np.maximum(hijo[12], 0), 1)
         return hijo
 
-    # Función para realizar la selección de un individuo
     def seleccion(self, CR, F):
+        # Realiza la selección, mutación y cruce para crear una nueva población.
         nueva_poblacion = []
         evaluaciones = self.evaluar_poblacion()
         for i in range(self.NP):
@@ -91,7 +89,7 @@ class Poblacion:
             eval_cruzado, pen_cruzado = self.evaluar(cruzado)
             eval_individuo, pen_individuo = evaluaciones[i]
             
-            # Always prefer feasible solutions
+            # Siempre prefiere soluciones factibles
             if pen_cruzado == 0 and pen_individuo > 0:
                 nueva_poblacion.append(cruzado)
             elif pen_cruzado > 0 and pen_individuo == 0:
@@ -109,8 +107,8 @@ class Poblacion:
                     
         self.individuos = nueva_poblacion
 
-
 def algoritmo_evolutivo(NP, CR, F, max_generaciones):
+    # Ejecuta el algoritmo evolutivo.
     poblacion = Poblacion(NP)  # Generar población aleatoria
     mejor_individuo = None
     mejor_evaluacion = float('inf')
@@ -133,6 +131,7 @@ def algoritmo_evolutivo(NP, CR, F, max_generaciones):
     return mejor_evaluacion, mejor_es_factible
 
 def main():
+    # Ejecuta el algoritmo evolutivo múltiples veces y guarda los mejores resultados.
     NP = 100
     CR = 0.9
     F = 0.9

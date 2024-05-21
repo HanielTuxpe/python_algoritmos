@@ -3,53 +3,42 @@ import numpy as np
 final_fit = []
 
 class Poblacion:
-    
     def __init__(self, NP):
         self.NP = NP
+        self.Dim = 20
         self.individuos = [self.generar_individuo() for _ in range(NP)]
-        
+        self._violaciones_individuo = []
+
     def generar_individuo(self):
-        # Genera un individuo con 13 dimensiones, con valores aleatorios dentro de rangos.
-        individuo = np.zeros(13)
-        individuo[:4] = np.random.uniform(low=0, high=1, size=4)
-        individuo[4:9] = np.random.uniform(low=0, high=1, size=5)
-        individuo[9:12] = np.random.uniform(low=0, high=10, size=3)
-        individuo[12] = np.random.uniform(low=0, high=1)
-        return individuo
+        # Genera un individuo con 20 dimensiones, con valores aleatorios dentro de rangos específicos.
+        return np.random.uniform(low=0, high=10, size=self.Dim)
 
     def evaluar(self, individuo):
-        # Evalúa la función objetivo de un individuo según la fórmula G01
-        x = individuo
-        fitness = 5 * np.sum(x[:4]) - 5 * np.sum(x[:4]**2) - np.sum(x[4:])
-        restricciones = self.evaluar_restricciones(individuo)
-        penalizacion = sum([max(0, r) for r in restricciones])
-        fitness += penalizacion * 10000
-        return fitness, penalizacion
+        # Evalúa la función objetivo de un individuo, incluyendo una penalización por violación de restricciones.
+        sum_cos4 = np.sum(np.cos(individuo)**4)
+        prod_cos2 = np.prod(np.cos(individuo)**2)
+        sum_ix2 = np.sum([(i + 1) * individuo[i]**2 for i in range(len(individuo))])
+        f_x = -abs((sum_cos4 - 2 * prod_cos2) / np.sqrt(sum_ix2))
+        return f_x
+
+    def g1(self, x):
+        return 0.75 - np.prod(x) <= 0
+
+    def g2(self, x):
+        return np.sum(x) - 7.5 * self.Dim <= 0
+
+    def calcular_violaciones(self, x):
+        self._violaciones = 0
+        if not self.g1(x):
+            self._violaciones += 1
+        if not self.g2(x):
+            self._violaciones += 1
+        self._violaciones_individuo.append(self._violaciones)
+        return self._violaciones
 
     def evaluar_poblacion(self):
-        evaluaciones = [self.evaluar(individuo) for individuo in self.individuos]
+        evaluaciones = [(self.evaluar(individuo), self.calcular_violaciones(individuo)) for individuo in self.individuos]
         return evaluaciones
-
-    def evaluar_restricciones(self, individuo):
-        # Evalúa las restricciones de un individuo.
-        x = individuo
-        restricciones = [
-            2*x[0] + 2*x[1] + x[9] + x[10] - 10,
-            2*x[0] + 2*x[2] + x[9] + x[11] - 10,
-            2*x[1] + 2*x[2] + x[10] + x[11] - 10,
-            -8*x[0] + x[9],
-            -8*x[1] + x[10],
-            -8*x[2] + x[11],
-            -2*x[3] - x[4] + x[9],
-            -2*x[5] - x[6] + x[10],
-            -2*x[7] - x[8] + x[11]
-        ]
-        return restricciones
-
-    def cumple_restricciones(self, individuo):
-        # Verifica si un individuo cumple con todas las restricciones.
-        restricciones = self.evaluar_restricciones(individuo)
-        return all(r <= 0 for r in restricciones)
 
     def mutacion(self, individuo, CR, F):
         # Realiza la mutación de un individuo.
@@ -59,19 +48,13 @@ class Poblacion:
         for j in range(len(individuo)):
             if np.random.rand() < CR or j == jrand:
                 nuevo_individuo[j] = self.individuos[r1][j] + F * (self.individuos[r2][j] - self.individuos[r3][j])
-        # Aplicar límites a los genes
-        nuevo_individuo[:9] = np.clip(nuevo_individuo[:9], 0, 1)
-        nuevo_individuo[9:12] = np.clip(nuevo_individuo[9:12], 0, 100)
-        nuevo_individuo[12] = np.clip(nuevo_individuo[12], 0, 1)
+                nuevo_individuo = np.clip(nuevo_individuo, 0, 10)
         return nuevo_individuo
 
     def cruz(self, individuo1, individuo2):
         # Realiza la cruz de dos individuos.
         hijo = (individuo1 + individuo2) / 2
-        # Aplicar límites a los genes
-        hijo[:9] = np.clip(hijo[:9], 0, 1)
-        hijo[9:12] = np.clip(hijo[9:12], 0, 100)
-        hijo[12] = np.clip(hijo[12], 0, 1)
+        hijo = np.clip(hijo, 0, 10)
         return hijo
 
     def seleccion(self, CR, F):
@@ -82,7 +65,7 @@ class Poblacion:
             individuo = self.individuos[i]
             mutado = self.mutacion(individuo, CR, F)
             cruzado = self.cruz(individuo, mutado)
-            eval_cruzado, pen_cruzado = self.evaluar(cruzado)
+            eval_cruzado, pen_cruzado = self.evaluar(cruzado), self.calcular_violaciones(cruzado)
             eval_individuo, pen_individuo = evaluaciones[i]
             
             # Siempre prefiere soluciones factibles
@@ -104,12 +87,13 @@ class Poblacion:
         self.individuos = nueva_poblacion
 
 def algoritmo_evolutivo(NP, CR, F, max_generaciones):
+    # Ejecuta el algoritmo evolutivo.
     poblacion = Poblacion(NP)  # Generar población aleatoria
     mejor_individuo = None
     mejor_evaluacion = float('inf')
     mejor_es_factible = False
     
-    for i in range(max_generaciones):
+    for _ in range(max_generaciones):
         poblacion.seleccion(CR, F)  # Seleccionar, Mutar y Cruzar
         evaluaciones = poblacion.evaluar_poblacion()
         for idx, (eval, pen) in enumerate(evaluaciones):
@@ -135,8 +119,8 @@ def main():
     for i in range(25):
         mejor_evaluacion, es_factible = algoritmo_evolutivo(NP, CR, F, max_gen)
         final_fit.append((mejor_evaluacion, es_factible))
-        
+        print(f"Vuelta: {i}")
     return final_fit
 
 if __name__ == '__main__':
-    fitness = main()
+    print(main())

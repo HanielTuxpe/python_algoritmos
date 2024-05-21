@@ -1,14 +1,14 @@
-import g01_Bounds as bound
-import g01_Reflex as reflex
+import g02_Boundary as bound
+import g02_Reflex as reflex
 import time
 
 class Comparacion:
     
     def excecute(self):
-        print("------EJERCICIO 1------")
+        print("------EJERCICIO 2------")
         print("Ejecutando Experimento Bounds")
         for _ in range(10):  
-            print(".", end="", flush=True)
+            print("°", end="", flush=True)
             time.sleep(0.5) 
         g01_Bound_Result = bound.main()
         for resultado in g01_Bound_Result:
@@ -18,7 +18,7 @@ class Comparacion:
 
         print("Ejecutando Experimento Reflex")
         for _ in range(10):  
-            print(".", end="", flush=True)
+            print("°", end="", flush=True)
             time.sleep(0.5) 
         g01_Reflex_Result =  reflex.main()
         for resultado in g01_Reflex_Result:
